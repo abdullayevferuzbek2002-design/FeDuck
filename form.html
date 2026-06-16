@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Оставить заявку</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f0f13;
+    --surface: #17171f;
+    --border: #2a2a38;
+    --accent: #7c6af7;
+    --accent2: #a78bfa;
+    --text: #e8e8f0;
+    --muted: #6b6b85;
+    --success: #34d399;
+    --error: #f87171;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  /* Background glow */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -200px; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(124,106,247,0.15) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 560px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .brand {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .brand-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .brand-icon {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+
+  .brand-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    background: linear-gradient(135deg, #fff, var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .brand-tagline {
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+
+  .card-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #fff;
+  }
+
+  .card-subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 32px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    -webkit-appearance: none;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(124,106,247,0.15);
+  }
+
+  input::placeholder, textarea::placeholder { color: var(--muted); }
+
+  select option { background: #1a1a2e; }
+
+  textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .service-option {
+    position: relative;
+  }
+
+  .service-option input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0; height: 0;
+  }
+
+  .service-option label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text);
+    text-transform: none;
+    letter-spacing: 0;
+    transition: all 0.2s;
+    margin: 0;
+  }
+
+  .service-option input:checked + label {
+    border-color: var(--accent);
+    background: rgba(124,106,247,0.1);
+    color: var(--accent2);
+  }
+
+  .service-option label:hover {
+    border-color: var(--accent);
+  }
+
+  .service-icon { font-size: 16px; }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 28px 0;
+  }
+
+  .budget-slider-wrapper {
+    padding-top: 8px;
+  }
+
+  .budget-display {
+    text-align: center;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--accent2);
+    margin-bottom: 12px;
+    font-feature-settings: "tnum";
+  }
+
+  .budget-display span { font-size: 16px; font-weight: 400; color: var(--muted); }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--border);
+    border: none;
+    border-radius: 2px;
+    outline: none;
+    padding: 0;
+    box-shadow: none;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; height: 20px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 0 4px rgba(124,106,247,0.2);
+    transition: box-shadow 0.2s;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover {
+    box-shadow: 0 0 0 6px rgba(124,106,247,0.3);
+  }
+
+  .budget-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--accent), #9d8df5);
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .submit-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 25px rgba(124,106,247,0.4);
+  }
+
+  .submit-btn:active { transform: translateY(0); }
+
+  .submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Success screen */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .success-icon {
+    width: 72px; height: 72px;
+    background: rgba(52,211,153,0.15);
+    border: 2px solid var(--success);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    margin: 0 auto 20px;
+    animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  @keyframes popIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .success-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+
+  .success-text {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .success-id {
+    margin-top: 20px;
+    padding: 12px 20px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .success-id strong { color: var(--accent2); }
+
+  .required-star { color: var(--accent); margin-left: 2px; }
+
+  @media (max-width: 500px) {
+    .card { padding: 28px 20px; }
+    .form-row, .services-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="brand">
+    <div class="brand-logo">
+      <div class="brand-icon">🚀</div>
+      <div class="brand-name">FeDuck CRM</div>
+    </div>
+    <div class="brand-tagline">Оставьте заявку — мы свяжемся в течение 1 часа</div>
+  </div>
+
+  <div class="card">
+    <!-- FORM -->
+    <div id="formSection">
+      <div class="card-title">Новая заявка</div>
+      <div class="card-subtitle">Заполните форму и мы подберём лучшее решение</div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Имя <span class="required-star">*</span></label>
+          <input type="text" id="name" placeholder="Ваше имя" required>
+        </div>
+        <div class="form-group">
+          <label>Компания</label>
+          <input type="text" id="company" placeholder="Название компании">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Телефон <span class="required-star">*</span></label>
+          <input type="tel" id="phone" placeholder="+998 90 000 00 00" required>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="email" placeholder="email@example.com">
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="form-group">
+        <label>Нужные услуги</label>
+        <div class="services-grid">
+          <div class="service-option">
+            <input type="checkbox" id="s1" value="AI Автоматизация">
+            <label for="s1"><span class="service-icon">🤖</span> AI Автоматизация</label>
+          </div>
+          <div class="service-option">
+            <input type="checkbox" id="s2" value="CRM система">
+            <label for="s2"><span class="service-icon">📊</span> CRM система</label>
+          </div>
+          <div class="service-option">
+            <input type="checkbox" id="s3" value="Разработка сайта">
+            <label for="s3"><span class="service-icon">🌐</span> Разработка сайта</label>
+          </div>
+          <div class="service-option">
+            <input type="checkbox" id="s4" value="Telegram бот">
+            <label for="s4"><span class="service-icon">💬</span> Telegram бот</label>
+          </div>
+          <div class="service-option">
+            <input type="checkbox" id="s5" value="Аналитика данных">
+            <label for="s5"><span class="service-icon">📈</span> Аналитика данных</label>
+          </div>
+          <div class="service-option">
+            <input type="checkbox" id="s6" value="Консультация">
+            <label for="s6"><span class="service-icon">💡</span> Консультация</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="form-group">
+        <label>Бюджет (USD)</label>
+        <div class="budget-slider-wrapper">
+          <div class="budget-display" id="budgetDisplay">$500 <span>/ проект</span></div>
+          <input type="range" id="budget" min="100" max="10000" value="500" step="100">
+          <div class="budget-labels"><span>$100</span><span>$10,000+</span></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Сроки</label>
+        <select id="deadline">
+          <option value="">Выберите срок</option>
+          <option value="Срочно (до 1 недели)">🔥 Срочно (до 1 недели)</option>
+          <option value="1-2 недели">1–2 недели</option>
+          <option value="1 месяц">1 месяц</option>
+          <option value="2-3 месяца">2–3 месяца</option>
+          <option value="Не спешу">Не спешу</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Описание задачи <span class="required-star">*</span></label>
+        <textarea id="message" placeholder="Опишите вашу задачу или проблему, которую нужно решить..."></textarea>
+      </div>
+
+      <button class="submit-btn" id="submitBtn" onclick="submitForm()">
+        Отправить заявку →
+      </button>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="success-screen" id="successSection">
+      <div class="success-icon">✓</div>
+      <div class="success-title">Заявка отправлена!</div>
+      <div class="success-text">
+        Мы получили вашу заявку и свяжемся с вами<br>в течение 1 рабочего часа.
+      </div>
+      <div class="success-id">
+        Номер заявки: <strong id="requestId"></strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Budget slider
+  const budgetSlider = document.getElementById('budget');
+  const budgetDisplay = document.getElementById('budgetDisplay');
+
+  budgetSlider.addEventListener('input', () => {
+    const val = parseInt(budgetSlider.value);
+    const display = val >= 10000 ? '$10,000+' : '$' + val.toLocaleString();
+    budgetDisplay.innerHTML = `${display} <span>/ проект</span>`;
+  });
+
+  function getSelectedServices() {
+    const checkboxes = document.querySelectorAll('.service-option input:checked');
+    return Array.from(checkboxes).map(cb => cb.value);
+  }
+
+  function generateId() {
+    return 'FD-' + Date.now().toString(36).toUpperCase();
+  }
+
+  function submitForm() {
+    const name = document.getElementById('name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const message = document.getElementById('message').value.trim();
+
+    if (!name || !phone || !message) {
+      alert('Пожалуйста, заполните обязательные поля: Имя, Телефон, Описание задачи');
+      return;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Отправляю...';
+
+    // Собираем данные заявки
+    const request = {
+      id: generateId(),
+      date: new Date().toISOString(),
+      status: 'Новая',
+      name,
+      company: document.getElementById('company').value.trim(),
+      phone,
+      email: document.getElementById('email').value.trim(),
+      services: getSelectedServices(),
+      budget: document.getElementById('budget').value,
+      deadline: document.getElementById('deadline').value,
+      message,
+    };
+
+    // Сохраняем в localStorage
+    const existing = JSON.parse(localStorage.getItem('feduck_requests') || '[]');
+    existing.unshift(request);
+    localStorage.setItem('feduck_requests', JSON.stringify(existing));
+
+    // Показываем успех
+    setTimeout(() => {
+      document.getElementById('formSection').style.display = 'none';
+      const success = document.getElementById('successSection');
+      success.style.display = 'block';
+      document.getElementById('requestId').textContent = request.id;
+    }, 800);
+  }
+</script>
+</body>
+</html>
